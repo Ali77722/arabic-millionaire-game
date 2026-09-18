@@ -156,7 +156,7 @@
     stopTimer();$('confirmBtn').disabled=true;
     $('answersGrid').querySelectorAll('.answer-btn').forEach((btn,i)=>{btn.disabled=true;if(i===result.correctIndex)btn.classList.add('correct');if(result.selected===i&&i!==result.correctIndex)btn.classList.add('wrong')});
     $('explanationBox').textContent=(result.timeout?'انتهى الوقت. ':'')+result.explanation;$('explanationBox').classList.remove('hidden');
-    if(result.correct){audio.correct();UI.toast('إجابة صحيحة! +'+UI.formatPrize(result.prize));}else{audio.wrong();UI.toast('الإجابة الصحيحة: '+result.correctText);}
+    if(result.correct){audio.correct();UI.toast('إجابة صحيحة! +'+UI.formatPrize(result.prize));}else{audio.wrong();UI.toast(result.eliminated?'انتهت محاولات الفريق الخمس. الإجابة الصحيحة: '+result.correctText:'الإجابة الصحيحة: '+result.correctText+' • تبقى '+(result.attemptsRemaining??0)+' محاولات للفريق');}
   }
   function afterResolved(){
     resultSnapshot=game.snapshot();
@@ -190,7 +190,7 @@
     stopTimer();audio.stopMusic();audio.music('win');audio.win();const state=resultSnapshot||game.snapshot();
     const rows=[...state.teams].sort((a,b)=>b.score-a.score);const best=rows[0];
     $('resultSubtitle').textContent=best?('الفريق الأعلى نتيجة: '+best.name+' — '+UI.formatPrize(best.score)):'انتهت الجولة.';
-    $('resultsTable').innerHTML='<table><thead><tr><th>الفريق</th><th>النقاط</th><th>صحيحة</th><th>خاطئة</th><th>أعلى مرحلة</th><th>مضمون</th><th>أفضل سلسلة</th></tr></thead><tbody>'+rows.map(t=>`<tr><td>${esc(t.icon+' '+t.name)}</td><td>${UI.formatPrize(t.score)}</td><td>${t.correct}</td><td>${t.wrong}</td><td>${t.stage}/${game.prizeLadder.length}</td><td>${UI.formatPrize(t.lastGuaranteed)}</td><td>${t.bestStreak}</td></tr>`).join('')+'</tbody></table>';
+    $('resultsTable').innerHTML='<table><thead><tr><th>الفريق</th><th>النقاط</th><th>صحيحة</th><th>خاطئة</th><th>محاولات متبقية</th><th>أعلى مرحلة</th><th>مضمون</th><th>أفضل سلسلة</th></tr></thead><tbody>'+rows.map(t=>`<tr><td>${esc(t.icon+' '+t.name)}</td><td>${UI.formatPrize(t.score)}</td><td>${t.correct}</td><td>${t.wrong}</td><td>${t.attemptsRemaining ?? 5}</td><td>${t.stage}/${game.prizeLadder.length}</td><td>${UI.formatPrize(t.lastGuaranteed)}</td><td>${t.bestStreak}</td></tr>`).join('')+'</tbody></table>';
     recordFinishedGame(state);window.StorageManager.clearSave();navigate('screen-results');
   }
   function recordFinishedGame(state){
