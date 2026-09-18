@@ -1,4 +1,4 @@
-const CACHE_NAME='millionaire-ar-v2';
+const CACHE_NAME='millionaire-ar-v3';
 const ASSETS=[
 './','./index.html','./style.css','./script.js','./README.md',
 './js/questions.js','./js/game.js','./js/storage.js','./js/audio.js','./js/ui.js',
