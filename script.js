@@ -229,7 +229,7 @@
     try{
       await window.QUESTIONS_READY;
       refreshQuestionBank();saveSettings();renderTeams();renderSettings();renderStats();updateHomeButtons();
-      if(window.location.protocol!=='file:' && 'serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+      if(window.location.protocol!=='file:' && 'serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=20260918-2').catch(()=>{});
     }catch(err){
       console.error('Question bank initialization failed',err);
       updateHomeButtons();
