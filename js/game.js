@@ -12,10 +12,10 @@
     configure(settings,bank){this.settings=deep(settings||{});this.bank=Array.isArray(bank)?bank:[]}
     newGame(teams,settings,bank){
       this.configure(settings,bank); const now=Date.now();
-      this.state={version:4,status:'playing',startedAt:now,elapsedBefore:0,turnIndex:0,round:1,answeredCount:0,totalQuestionTimeMs:0,activeQuestion:null,teams:teams.map((t,i)=>({id:t.id||`team-${i+1}`,name:t.name||`الفريق ${i+1}`,icon:t.icon||['🦅','🦁','🐺','🐉','🦊','🦈'][i%6],color:t.color||['#3b82f6','#ef4444','#8b5cf6','#22c55e','#f97316','#06b6d4'][i%6],stage:0,score:0,lastGuaranteed:0,correct:0,wrong:0,streak:0,bestStreak:0,answeredMs:0,lifelines:{fifty:false,poll:false,friend:false,swap:false},seen:[],finished:false,finishReason:null}))};
+      this.state={version:4,status:'playing',startedAt:now,elapsedBefore:0,turnIndex:0,round:1,answeredCount:0,totalQuestionTimeMs:0,activeQuestion:null,teams:teams.map((t,i)=>({id:t.id||`team-${i+1}`,name:t.name||`الفريق ${i+1}`,icon:t.icon||['🦅','🦁','🐺','🐉','🦊','🦈'][i%6],color:t.color||['#3b82f6','#ef4444','#8b5cf6','#22c55e','#f97316','#06b6d4'][i%6],stage:0,score:0,lastGuaranteed:0,attemptsRemaining:5,correct:0,wrong:0,streak:0,bestStreak:0,answeredMs:0,lifelines:{fifty:false,poll:false,friend:false,swap:false},seen:[],finished:false,finishReason:null}))};
       this.loadQuestion(); this.persist(); return this.snapshot();
     }
-    resume(save,settings,bank){if(!save||!save.teams?.length)return false;this.configure(settings,bank);this.state=deep(save);if(!this.state.activeQuestion)this.loadQuestion();return this.snapshot()}
+    resume(save,settings,bank){if(!save||!save.teams?.length)return false;this.configure(settings,bank);this.state=deep(save);this.state.version=5;(this.state.teams||[]).forEach(t=>{if(!Number.isInteger(t.attemptsRemaining))t.attemptsRemaining=5;});if(!this.state.activeQuestion)this.loadQuestion();return this.snapshot()}
     snapshot(){return deep(this.state)}
     get currentTeam(){return this.state?.teams?.[this.state.turnIndex]||null}
     get prizeLadder(){return (this.settings?.prizes?.length?this.settings.prizes:defaultPrizes)}
@@ -54,12 +54,12 @@
       q.locked=true;const elapsed=Math.max(0,Date.now()-q.startedAt);const correct=q.selected===q.correctIndex;
       this.state.answeredCount++;this.state.totalQuestionTimeMs+=elapsed;t.answeredMs+=elapsed;
       if(correct){t.correct++;t.streak++;t.bestStreak=Math.max(t.bestStreak,t.streak);t.score=this.currentPrize;const safe=this.safeMilestones; if(safe.includes(t.stage))t.lastGuaranteed=this.currentPrize;t.stage++;if(t.stage>=this.prizeLadder.length){t.finished=true;t.finishReason='million';}}
-      else{t.wrong++;t.streak=0;t.score=t.lastGuaranteed;t.finished=true;t.finishReason='wrong';}
+      else{t.wrong++;t.streak=0;t.score=t.lastGuaranteed;t.attemptsRemaining=Math.max(0,(t.attemptsRemaining??5)-1);if(t.attemptsRemaining===0){t.finished=true;t.finishReason='wrong';}else{t.finishReason=null;}}
       this.persist();
-      return {correct,selected:q.selected,correctIndex:q.correctIndex,correctText:q.originalAnswer,explanation:q.explanation,elapsed,teamId:t.id,prize:t.score,advanced:correct};
+      return {correct,selected:q.selected,correctIndex:q.correctIndex,correctText:q.originalAnswer,explanation:q.explanation,elapsed,teamId:t.id,prize:t.score,attemptsRemaining:t.attemptsRemaining,eliminated:t.finished,advanced:correct};
     }
     timeout(){
-      const q=this.state?.activeQuestion,t=this.currentTeam;if(!q||q.locked||!t)return null;q.locked=true;const elapsed=Math.max(0,Date.now()-q.startedAt);this.state.answeredCount++;this.state.totalQuestionTimeMs+=elapsed;t.answeredMs+=elapsed;t.wrong++;t.streak=0;t.score=t.lastGuaranteed;t.finished=true;t.finishReason='timeout';this.persist();return {correct:false,timeout:true,selected:null,correctIndex:q.correctIndex,correctText:q.originalAnswer,explanation:q.explanation,elapsed,teamId:t.id,prize:t.score};
+      const q=this.state?.activeQuestion,t=this.currentTeam;if(!q||q.locked||!t)return null;q.locked=true;const elapsed=Math.max(0,Date.now()-q.startedAt);this.state.answeredCount++;this.state.totalQuestionTimeMs+=elapsed;t.answeredMs+=elapsed;t.wrong++;t.streak=0;t.score=t.lastGuaranteed;t.attemptsRemaining=Math.max(0,(t.attemptsRemaining??5)-1);if(t.attemptsRemaining===0){t.finished=true;t.finishReason='timeout';}else{t.finishReason=null;}this.persist();return {correct:false,timeout:true,selected:null,correctIndex:q.correctIndex,correctText:q.originalAnswer,explanation:q.explanation,elapsed,teamId:t.id,prize:t.score,attemptsRemaining:t.attemptsRemaining,eliminated:t.finished};
     }
     useLifeline(name){
       const q=this.state?.activeQuestion,t=this.currentTeam;if(!q||q.locked||!t||!this.settings?.lifelines||t.lifelines[name])return {ok:false,reason:'unavailable'};
