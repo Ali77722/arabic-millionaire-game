@@ -177,6 +177,7 @@
   }
   function submit(){const r=game.submitAnswer();if(!r)return; revealResult(r); setTimeout(afterResolved,1800)}
   function createGame(){
+    if(!bank.length){UI.toast('قاعدة الأسئلة ما زالت تُحمّل، حاول مرة أخرى بعد لحظة.');return;}
     const setup=getSetup(); const teams=setup.teams.map((t,i)=>({id:t.id||'team-'+(i+1),name:t.name.trim()||('الفريق '+(i+1)),icon:t.icon,color:t.color}));
     settings.teamCount=teams.length;saveSettings();game.newGame(teams,settings,bank);window.StorageManager.saveSetup({teams});navigate('screen-game');audio.start();audio.music('think');showQuestion();
   }
@@ -222,10 +223,17 @@
     window.addEventListener('beforeunload',()=>{if(game.state?.status==='playing'&&game.state.activeQuestion){const limit=Number(settings.timer)||0;if(limit){const left=Math.max(0,limit-Math.floor((Date.now()-game.state.activeQuestion.startedAt)/1000));game.state.activeQuestion.savedRemaining=left}game.persist()}});
   }
   function handleImport(e){const f=e.target.files?.[0];if(!f)return;const reader=new FileReader();reader.onload=()=>{try{const arr=JSON.parse(reader.result);if(!Array.isArray(arr))throw new Error('not-array');const cleaned=arr.map((q,i)=>({...q,id:q.id??('import-'+(i+1)),answer:Number(q.answer),prize:Number(q.prize||0),explanation:q.explanation||''}));const v=game.validateBank(cleaned);if(!v.valid){UI.modalHtml({title:'الملف غير صالح',html:esc(v.errors.slice(0,8).join('<br>'))});return;}window.StorageManager.saveImportedQuestions(cleaned);refreshQuestionBank();renderSettings();UI.toast('تم استيراد '+cleaned.length+' سؤال.');}catch(err){UI.modalHtml({title:'تعذر قراءة الملف',html:'تأكد أن الملف JSON صحيح ومهيأ كمصفوفة أسئلة.'})}};reader.readAsText(f,'utf-8');e.target.value='';}
-  try{
-    await window.QUESTIONS_READY;
-    refreshQuestionBank();saveSettings();renderTeams();renderSettings();renderStats();updateHomeButtons();bind();
-    if(window.location.protocol!=='file:' && 'serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
-    navigate('screen-home');
-  }catch(err){console.error(err);UI.modalHtml({title:'تعذر تحميل قاعدة الأسئلة',html:'تعذر تجهيز قاعدة الأسئلة المحلية. حدّث الصفحة أو استخدم متصفحًا حديثًا يدعم التشغيل دون اتصال.'});}
+  bind();
+  navigate('screen-home');
+  (async()=>{
+    try{
+      await window.QUESTIONS_READY;
+      refreshQuestionBank();saveSettings();renderTeams();renderSettings();renderStats();updateHomeButtons();
+      if(window.location.protocol!=='file:' && 'serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    }catch(err){
+      console.error('Question bank initialization failed',err);
+      updateHomeButtons();
+      UI.toast('تعذر تحميل قاعدة الأسئلة. جرّب تحديث الصفحة.');
+    }
+  })();
 })();
