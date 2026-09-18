@@ -1,0 +1,3 @@
+/* 760 offline questions. Data is split into small cached chunks for GitHub Pages reliability. */
+const QUESTIONS_ZIP=window.QUESTION_PARTS.join("");
+window.QUESTIONS_READY=(async()=>{const bin=Uint8Array.from(atob(QUESTIONS_ZIP),c=>c.charCodeAt(0));const stream=new Blob([bin]).stream().pipeThrough(new DecompressionStream("deflate"));const text=await new Response(stream).text();const rows=JSON.parse(text);window.QUESTION_BANK=rows.map(r=>({id:r[0],question:r[1],options:r[2],answer:r[3],category:r[4],difficulty:r[5],prize:0,explanation:"الإجابة الصحيحة هي: "+r[2][r[3]]+"."}));return window.QUESTION_BANK;})();
