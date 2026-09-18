@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#07101f" />
+  <meta name="description" content="من سيربح المليون — لعبة مسابقات جماعية عربية تعمل مباشرة في المتصفح وبدون خدمات خارجية." />
+  <title>من سيربح المليون</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <button id="homeBtn" class="icon-btn" type="button" title="الرئيسية" aria-label="الرئيسية">⌂</button>
+      <div class="brand-mini">
+        <span class="brand-gem">★</span>
+        <span>من سيربح المليون</span>
+      </div>
+      <div class="top-actions">
+        <button id="audioBtn" class="icon-btn" type="button" title="الصوت">🔊</button>
+        <button id="fullscreenBtn" class="icon-btn" type="button" title="ملء الشاشة">⛶</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="screen-home" class="screen active">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow">مسابقة جماعية • عربية • تعمل دون إنترنت</div>
+            <h1>من سيربح <span>المليون</span></h1>
+            <p class="hero-sub">نسخة مسابقات احترافية للفرق، بقاعدة ضخمة من الأسئلة، وسائل مساعدة، جوائز متصاعدة، مؤقت، حفظ واستكمال، وإحصائيات.</p>
+            <div class="hero-actions">
+              <button id="newGameBtn" class="primary-btn xl" type="button">ابدأ لعبة جديدة</button>
+              <button id="continueBtn" class="secondary-btn xl" type="button">استكمال اللعبة</button>
+            </div>
+            <div class="feature-chips">
+              <span>+700 سؤال</span><span>2–6 فرق</span><span>4 وسائل مساعدة</span><span>Offline</span>
+            </div>
+          </div>
+          <div class="hero-orb" aria-hidden="true">
+            <div class="orb-ring ring-a"></div><div class="orb-ring ring-b"></div>
+            <div class="orb-core"><span class="million">1,000,000</span><span>نقطة/جائزة نهائية</span></div>
+            <div class="orbit-node n1">50:50</div><div class="orbit-node n2">👥</div><div class="orbit-node n3">☎</div><div class="orbit-node n4">↻</div>
+          </div>
+        </div>
+        <div class="home-cards">
+          <button class="menu-card" data-nav="screen-stats" type="button"><strong>📊 الإحصائيات</strong><span>سجل الأداء وأفضل النتائج</span></button>
+          <button class="menu-card" data-nav="screen-settings" type="button"><strong>⚙️ الإعدادات</strong><span>الفرق، المؤقت، الجوائز، الصوت</span></button>
+          <button class="menu-card" data-nav="screen-help" type="button"><strong>❓ كيفية اللعب</strong><span>شرح سريع لكل قواعد المسابقة</span></button>
+        </div>
+      </section>
+
+      <section id="screen-setup" class="screen">
+        <div class="page-head"><div><div class="eyebrow">المرحلة الأولى</div><h2>إعداد الفرق</h2></div><span id="setupStatus" class="pill">2 فرق</span></div>
+        <div class="setup-layout">
+          <div class="panel team-panel">
+            <div class="panel-head"><h3>الفرق المشاركة</h3><div class="stepper"><button id="teamMinus" type="button">−</button><span id="teamCount">2</span><button id="teamPlus" type="button">+</button></div></div>
+            <div id="teamEditors" class="team-editors"></div>
+          </div>
+          <div class="panel summary-panel">
+            <h3>قبل الانطلاق</h3>
+            <div class="summary-row"><span>الفرق</span><b id="summaryTeams">2</b></div>
+            <div class="summary-row"><span>عدد الأسئلة المتاحة</span><b id="summaryQuestions">—</b></div>
+            <div class="summary-row"><span>المؤقت</span><b id="summaryTimer">30 ثانية</b></div>
+            <div class="summary-row"><span>نظام الجوائز</span><b>1,000,000</b></div>
+            <div class="summary-callout">يمكنك تعديل الأسماء والألوان والأيقونات الآن، وتغيير بقية القواعد من الإعدادات.</div>
+            <div class="form-actions"><button id="setupBack" class="ghost-btn" type="button">رجوع</button><button id="startGameBtn" class="primary-btn" type="button">ابدأ المسابقة</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-settings" class="screen">
+        <div class="page-head"><div><div class="eyebrow">التحكم الكامل</div><h2>الإعدادات</h2></div><button class="ghost-btn" data-nav="screen-home" type="button">العودة</button></div>
+        <div class="settings-grid">
+          <div class="panel">
+            <h3>اللعبة</h3>
+            <label class="field"><span>عدد الفرق</span><select id="setTeamCount"><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></label>
+            <label class="field"><span>المؤقت</span><select id="setTimer"><option value="30">30 ثانية</option><option value="45">45 ثانية</option><option value="60">60 ثانية</option><option value="0">بدون مؤقت</option></select></label>
+            <label class="field"><span>تدرج الصعوبة</span><select id="setDifficulty"><option value="progressive">تصاعدي</option><option value="mixed">مختلط</option><option value="challenge">تحدي</option></select></label>
+            <label class="field"><span>سرعة الانتقالات</span><select id="setMotion"><option value="normal">طبيعية</option><option value="fast">سريعة</option><option value="slow">سينمائية</option></select></label>
+            <label class="switch-row"><span>الوضع الليلي</span><input id="setDark" type="checkbox" checked><span class="switch"></span></label>
+          </div>
+          <div class="panel">
+            <h3>المساعدة والصوت</h3>
+            <label class="switch-row"><span>تفعيل وسائل المساعدة</span><input id="setLifelines" type="checkbox" checked><span class="switch"></span></label>
+            <label class="switch-row"><span>المؤثرات الصوتية</span><input id="setSfx" type="checkbox" checked><span class="switch"></span></label>
+            <label class="switch-row"><span>الموسيقى</span><input id="setMusic" type="checkbox" checked><span class="switch"></span></label>
+            <label class="field"><span>مستوى الصوت <b id="volumeLabel">65%</b></span><input id="setVolume" type="range" min="0" max="100" value="65"></label>
+            <div class="inline-actions"><button id="testSoundBtn" class="secondary-btn" type="button">اختبار الصوت</button></div>
+          </div>
+          <div class="panel">
+            <h3>الجوائز</h3>
+            <label class="field"><span>السلم الحالي</span><select id="prizePreset"><option value="million">السلم القياسي</option><option value="compact">سلم مختصر</option><option value="custom">مخصص</option></select></label>
+            <textarea id="customPrizes" class="prize-box" rows="8" placeholder="اكتب القيم، قيمة في كل سطر أو مفصولة بفواصل"></textarea>
+            <p class="muted">يُنصح بأن تكون القيم متزايدة وأن تتضمن مرحلة مضمونة واحدة على الأقل.</p>
+          </div>
+          <div class="panel">
+            <h3>قاعدة الأسئلة</h3>
+            <div class="import-box"><strong id="questionSourceLabel">القاعدة المضمنة</strong><span id="questionCountSettings">—</span></div>
+            <div class="inline-actions"><button id="importBtn" class="secondary-btn" type="button">استيراد JSON</button><button id="resetQuestionsBtn" class="ghost-btn" type="button">استخدام القاعدة الأصلية</button><input id="questionFile" type="file" accept="application/json,.json" hidden></div>
+            <p class="muted">الملف يجب أن يحتوي مصفوفة من الأسئلة. سيتم التحقق منها قبل اعتمادها.</p>
+          </div>
+          <div class="panel danger-panel">
+            <h3>إدارة البيانات</h3>
+            <p class="muted">هذا يمسح الإحصائيات والحفظ والنتائج السابقة من هذا المتصفح.</p>
+            <button id="resetAllBtn" class="danger-btn" type="button">إعادة ضبط كل البيانات</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-game" class="screen game-screen">
+        <div class="game-top">
+          <div id="turnBadge" class="turn-badge"><span class="turn-dot"></span><span id="turnText">دور الفريق</span></div>
+          <div class="progress-area"><div class="progress-meta"><span id="questionCounter">السؤال 1</span><span id="remainingText">متبقي 14</span></div><div class="progress-track"><div id="progressBar" class="progress-fill"></div></div></div>
+          <div class="timer-box" id="timerBox"><span class="timer-label">الوقت</span><strong id="timerValue">30</strong></div>
+        </div>
+        <div class="game-main">
+          <aside class="leaderboard panel">
+            <div class="panel-head"><h3>الترتيب</h3><button id="quitGameBtn" class="tiny-btn" type="button">إنهاء</button></div>
+            <div id="scoreList"></div>
+            <div class="ladder-head">سلم الجوائز</div>
+            <div id="prizeLadder" class="prize-ladder"></div>
+          </aside>
+
+          <div class="question-stage">
+            <div class="question-card">
+              <div class="q-top"><span id="qCategory" class="pill">ثقافة عامة</span><span id="qDifficulty" class="difficulty">متوسط</span></div>
+              <h2 id="questionText">جاري تحميل السؤال…</h2>
+              <div id="answersGrid" class="answers-grid"></div>
+              <div class="confirm-row"><button id="confirmBtn" class="primary-btn" type="button" disabled>تأكيد الإجابة</button><span id="selectedHint" class="selected-hint">اختر إجابة أولًا</span></div>
+            </div>
+            <div id="lifelineBar" class="lifeline-bar">
+              <button class="life-btn" data-life="fifty">50:50</button>
+              <button class="life-btn" data-life="poll">سؤال الجمهور</button>
+              <button class="life-btn" data-life="friend">اتصال بصديق</button>
+              <button class="life-btn" data-life="swap">تبديل السؤال</button>
+            </div>
+            <div id="explanationBox" class="explanation-box hidden"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-results" class="screen">
+        <div class="results-hero"><div class="trophy">🏆</div><div><div class="eyebrow">نهاية الجولة</div><h2>النتائج النهائية</h2><p id="resultSubtitle">أحسنتم!</p></div></div>
+        <div id="resultsTable" class="results-table panel"></div>
+        <div class="result-actions"><button id="newRoundBtn" class="primary-btn" type="button">جولة جديدة</button><button id="replayBtn" class="secondary-btn" type="button">إعادة اللعب بنفس الفرق</button><button class="ghost-btn" data-nav="screen-home" type="button">القائمة الرئيسية</button></div>
+      </section>
+
+      <section id="screen-stats" class="screen">
+        <div class="page-head"><div><div class="eyebrow">سجل اللعب</div><h2>الإحصائيات</h2></div><button class="ghost-btn" data-nav="screen-home" type="button">العودة</button></div>
+        <div id="statsGrid" class="stats-grid"></div>
+        <div class="panel recent-panel"><div class="panel-head"><h3>آخر الجولات</h3><button id="clearHistoryBtn" class="tiny-btn" type="button">مسح السجل</button></div><div id="historyList"></div></div>
+      </section>
+
+      <section id="screen-help" class="screen">
+        <div class="page-head"><div><div class="eyebrow">تعرّف على القواعد</div><h2>كيفية اللعب</h2></div><button class="ghost-btn" data-nav="screen-home" type="button">العودة</button></div>
+        <div class="help-grid">
+          <div class="panel help-card"><div class="help-icon">1</div><h3>أنشئ الفرق</h3><p>من شاشة الإعداد اختر 2 إلى 6 فرق، ثم ضع اسمًا وأيقونة ولونًا لكل فريق.</p></div>
+          <div class="panel help-card"><div class="help-icon">2</div><h3>تناوب الأدوار</h3><p>كل فريق يتلقى سؤالًا في دوره. نتيجته وحفظه ووسائل مساعدته مستقلة عن بقية الفرق.</p></div>
+          <div class="panel help-card"><div class="help-icon">3</div><h3>اربح المراحل</h3><p>ترتفع الجائزة مع الإجابات الصحيحة. المراحل المضمونة تحمي جزءًا من نتيجة الفريق عند الخطأ.</p></div>
+          <div class="panel help-card"><div class="help-icon">4</div><h3>استخدم المساعدة</h3><p>50:50، سؤال الجمهور، الاتصال بصديق، وتبديل السؤال. لكل وسيلة استخدام واحد لكل فريق في الجولة.</p></div>
+          <div class="panel help-card"><div class="help-icon">5</div><h3>الحفظ والاستكمال</h3><p>الحالة تُحفظ تلقائيًا أثناء الجولة. عند العودة اضغط استكمال اللعبة للمتابعة من آخر موضع.</p></div>
+          <div class="panel help-card"><div class="help-icon">6</div><h3>بدون إنترنت</h3><p>الأسئلة والصوت والمنطق الأساسي داخل المشروع، ولا تعتمد اللعبة على API خارجي.</p></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal" class="modal hidden"><div class="modal-backdrop"></div><div class="modal-card"><div id="modalIcon" class="modal-icon">!</div><h3 id="modalTitle">تأكيد</h3><p id="modalText"></p><div class="modal-actions"><button id="modalCancel" class="ghost-btn" type="button">إلغاء</button><button id="modalConfirm" class="danger-btn" type="button">تأكيد</button></div></div></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <input id="hiddenQuestionInput" type="file" accept="application/json,.json" hidden />
+
+  <script src="js/questions.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
