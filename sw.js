@@ -1,28 +1,10 @@
-const CACHE_NAME = 'millionaire-ar-v1';
-const ASSETS = [
-  './', './index.html', './style.css', './script.js', './README.md',
-  './js/questions.js', './js/game.js', './js/storage.js', './js/audio.js', './js/ui.js'
+const CACHE_NAME='millionaire-ar-v2';
+const ASSETS=[
+'./','./index.html','./style.css','./script.js','./README.md',
+'./js/questions.js','./js/game.js','./js/storage.js','./js/audio.js','./js/ui.js',
+'./js/question-parts/q01.js','./js/question-parts/q02.js','./js/question-parts/q03.js',
+'./js/question-parts/q04.js','./js/question-parts/q05.js','./js/question-parts/q06.js','./js/question-parts/q07.js'
 ];
-
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
-  );
-  self.clients.claim();
-});
-
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
-      const copy = response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(() => {});
-      return response;
-    }).catch(() => caches.match('./index.html')))
-  );
-});
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(ASSETS)));self.skipWaiting()});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))));self.clients.claim()});
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(res=>{const copy=res.clone();caches.open(CACHE_NAME).then(c=>c.put(e.request,copy)).catch(()=>{});return res}).catch(()=>caches.match('./index.html'))))});
