@@ -63,15 +63,15 @@
     $('setupStatus').textContent=count+' فرق';
     $('summaryTeams').textContent=count;
     $('setTeamCount').value=String(count);
-    $('teamEditors').innerHTML=setup.teams.map((t,i)=>\`
-      <div class="team-editor" data-team="\${i}">
-        <div class="team-editor-head"><div class="avatar-preview" style="background:\${esc(t.color)}18;border-color:\${esc(t.color)}55">\${esc(t.icon)}</div><strong>الفريق \${i+1}</strong></div>
+    $('teamEditors').innerHTML=setup.teams.map((t,i)=>`
+      <div class="team-editor" data-team="${i}">
+        <div class="team-editor-head"><div class="avatar-preview" style="background:${esc(t.color)}18;border-color:${esc(t.color)}55">${esc(t.icon)}</div><strong>الفريق ${i+1}</strong></div>
         <div class="team-grid">
-          <label class="field"><span>اسم الفريق</span><input data-key="name" type="text" maxlength="24" value="\${esc(t.name)}"></label>
-          <label class="field"><span>الأيقونة</span><select data-key="icon">\${icons.map(x=>\`<option \${x===t.icon?'selected':''}>\${x}</option>\`).join('')}</select></label>
-          <label class="field"><span>اللون</span><input data-key="color" type="color" value="\${esc(t.color)}"></label>
+          <label class="field"><span>اسم الفريق</span><input data-key="name" type="text" maxlength="24" value="${esc(t.name)}"></label>
+          <label class="field"><span>الأيقونة</span><select data-key="icon">${icons.map(x=>`<option ${x===t.icon?'selected':''}>${x}</option>`).join('')}</select></label>
+          <label class="field"><span>اللون</span><input data-key="color" type="color" value="${esc(t.color)}"></label>
         </div>
-      </div>\`).join('');
+      </div>`).join('');
     $('teamEditors').querySelectorAll('.team-editor').forEach((row,i)=>{
       row.querySelectorAll('[data-key]').forEach(input=>input.addEventListener('input',()=>{
         const s=getSetup(); const key=input.dataset.key; s.teams[i][key]=input.value; window.StorageManager.saveSetup(s); renderTeamSummaryPreview(s);
@@ -114,9 +114,9 @@
   function renderScoreboard(){
     const state=game.snapshot(); if(!state)return;
     const rows=[...state.teams].sort((a,b)=>b.score-a.score);
-    $('scoreList').innerHTML=rows.map(t=>\`<div class="score-item \${t.id===game.currentTeam?.id?'active':''}">\${UI.teamAvatar(t)}<div><div class="score-name">\${esc(t.name)}</div><div class="score-sub">المرحلة \${Math.min(t.stage,game.prizeLadder.length)}/\${game.prizeLadder.length} • \${t.correct} صحيحة</div></div><div class="score-points">\${UI.formatPrize(t.score)}</div></div>\`).join('');
+    $('scoreList').innerHTML=rows.map(t=>`<div class="score-item ${t.id===game.currentTeam?.id?'active':''}">${UI.teamAvatar(t)}<div><div class="score-name">${esc(t.name)}</div><div class="score-sub">المرحلة ${Math.min(t.stage,game.prizeLadder.length)}/${game.prizeLadder.length} • ${t.correct} صحيحة</div></div><div class="score-points">${UI.formatPrize(t.score)}</div></div>`).join('');
     const cur=game.currentTeam?.stage||0;
-    $('prizeLadder').innerHTML=game.prizeLadder.map((p,i)=>\`<div class="prize-item \${i===cur?'current ':''}\${game.safeMilestones.includes(i)?'safe':''}"><span>\${i+1}</span><span>\${UI.formatPrize(p)}</span></div>\`).reverse().join('');
+    $('prizeLadder').innerHTML=game.prizeLadder.map((p,i)=>`<div class="prize-item ${i===cur?'current ':''}${game.safeMilestones.includes(i)?'safe':''}"><span>${i+1}</span><span>${UI.formatPrize(p)}</span></div>`).reverse().join('');
   }
   function showQuestion(){
     const q=game.state?.activeQuestion; if(!q)return;
@@ -130,7 +130,7 @@
     $('questionCounter').textContent='السؤال '+(game.currentTeam.stage+1)+' / '+game.prizeLadder.length;
     $('remainingText').textContent='متبقي '+Math.max(0,bank.length-game.state.answeredCount);
     $('progressBar').style.width=(Math.min(100,(game.currentTeam.stage/game.prizeLadder.length)*100))+'%';
-    $('answersGrid').innerHTML=q.options.map((a,i)=>\`<button class="answer-btn" data-answer="\${i}" \${q.disabled.includes(i)?'disabled':''}><span class="answer-letter">\${window.GameUtils.letters[i]}</span><span>\${esc(a)}</span></button>\`).join('');
+    $('answersGrid').innerHTML=q.options.map((a,i)=>`<button class="answer-btn" data-answer="${i}" ${q.disabled.includes(i)?'disabled':''}><span class="answer-letter">${window.GameUtils.letters[i]}</span><span>${esc(a)}</span></button>`).join('');
     $('answersGrid').querySelectorAll('.answer-btn').forEach(btn=>btn.addEventListener('click',()=>{
       if(game.selectAnswer(Number(btn.dataset.answer))){
         $('answersGrid').querySelectorAll('.answer-btn').forEach(b=>b.classList.remove('selected'));
@@ -171,7 +171,7 @@
     const res=game.useLifeline(name); if(!res?.ok){UI.toast('وسيلة المساعدة غير متاحة.');return;} audio.lifeline();renderLifelines();
     if(res.swapped){showQuestion();UI.toast('تم تبديل السؤال.');return;}
     if(res.percentages){
-      const labels=res.percentages.map((p,i)=>\`\${window.GameUtils.letters[i]}: \${p}%\`).join('<br>'); UI.modalHtml({title:'سؤال الجمهور',html:'توقعات الجمهور:<br>'+labels});
+      const labels=res.percentages.map((p,i)=>`${window.GameUtils.letters[i]}: ${p}%`).join('<br>'); UI.modalHtml({title:'سؤال الجمهور',html:'توقعات الجمهور:<br>'+labels});
     } else if(res.friend){UI.modalHtml({title:'الاتصال بصديق',html:esc(res.friend)+'<br><small>الثقة: '+esc(res.confidence)+'</small>'});}
     else if(name==='fifty'){showQuestion();UI.toast('تم حذف إجابتين خاطئتين.');}
   }
@@ -190,7 +190,7 @@
     stopTimer();audio.stopMusic();audio.music('win');audio.win();const state=resultSnapshot||game.snapshot();
     const rows=[...state.teams].sort((a,b)=>b.score-a.score);const best=rows[0];
     $('resultSubtitle').textContent=best?('الفريق الأعلى نتيجة: '+best.name+' — '+UI.formatPrize(best.score)):'انتهت الجولة.';
-    $('resultsTable').innerHTML='<table><thead><tr><th>الفريق</th><th>النقاط</th><th>صحيحة</th><th>خاطئة</th><th>أعلى مرحلة</th><th>مضمون</th><th>أفضل سلسلة</th></tr></thead><tbody>'+rows.map(t=>\`<tr><td>\${esc(t.icon+' '+t.name)}</td><td>\${UI.formatPrize(t.score)}</td><td>\${t.correct}</td><td>\${t.wrong}</td><td>\${t.stage}/\${game.prizeLadder.length}</td><td>\${UI.formatPrize(t.lastGuaranteed)}</td><td>\${t.bestStreak}</td></tr>\`).join('')+'</tbody></table>';
+    $('resultsTable').innerHTML='<table><thead><tr><th>الفريق</th><th>النقاط</th><th>صحيحة</th><th>خاطئة</th><th>أعلى مرحلة</th><th>مضمون</th><th>أفضل سلسلة</th></tr></thead><tbody>'+rows.map(t=>`<tr><td>${esc(t.icon+' '+t.name)}</td><td>${UI.formatPrize(t.score)}</td><td>${t.correct}</td><td>${t.wrong}</td><td>${t.stage}/${game.prizeLadder.length}</td><td>${UI.formatPrize(t.lastGuaranteed)}</td><td>${t.bestStreak}</td></tr>`).join('')+'</tbody></table>';
     recordFinishedGame(state);window.StorageManager.clearSave();navigate('screen-results');
   }
   function recordFinishedGame(state){
@@ -200,8 +200,8 @@
   function renderStats(){
     const s=window.StorageManager.getStats();const avg=s.answeredForAvg?Math.round(s.totalAnswerMs/s.answeredForAvg/1000):0;
     const cards=[['الجولات',s.games],['الأسئلة',s.questions],['إجابات صحيحة',s.correct],['إجابات خاطئة',s.wrong],['أعلى نتيجة',UI.formatPrize(s.highestScore)],['أفضل فريق',esc(s.bestTeam)],['أطول سلسلة',s.longestStreak],['متوسط الإجابة',avg+' ث']];
-    $('statsGrid').innerHTML=cards.map(([l,v])=>\`<div class="stat-card"><span class="label">\${l}</span><span class="value">\${v}</span></div>\`).join('');
-    const h=window.StorageManager.getHistory();$('historyList').innerHTML=h.length?h.map(x=>\`<div class="recent-row"><strong>\${esc(x.bestTeam)}</strong><span>\${UI.formatPrize(x.score)}</span><span>\${x.questions} سؤال</span><span>\${new Date(x.date).toLocaleDateString('ar-IQ')}</span></div>\`).join(''):'<p class="muted">لا توجد جولات مسجلة بعد.</p>';
+    $('statsGrid').innerHTML=cards.map(([l,v])=>`<div class="stat-card"><span class="label">${l}</span><span class="value">${v}</span></div>`).join('');
+    const h=window.StorageManager.getHistory();$('historyList').innerHTML=h.length?h.map(x=>`<div class="recent-row"><strong>${esc(x.bestTeam)}</strong><span>${UI.formatPrize(x.score)}</span><span>${x.questions} سؤال</span><span>${new Date(x.date).toLocaleDateString('ar-IQ')}</span></div>`).join(''):'<p class="muted">لا توجد جولات مسجلة بعد.</p>';
   }
   function bind(){
     document.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.nav)));
